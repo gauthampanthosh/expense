@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
+const API = import.meta.env.VITE_API_URL;
+
 const CATEGORIES = ['Food', 'Travel', 'Shopping', 'Bills', 'Salary', 'Other'];
 const METHODS = ['UPI', 'Cash', 'Bank'];
 
@@ -51,7 +53,7 @@ const AddTransaction = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/transactions', formData);
+      await axios.post(`${API}/api/transactions`, formData);
       navigate('/');
     } catch (err) {
       console.warn('Backend unavailable, mock success', err);

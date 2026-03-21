@@ -5,6 +5,8 @@ import { ArrowUpRight, ArrowDownRight, Smartphone, Banknote, Building, Coffee, S
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { formatINR } from '../utils/formatters';
 
+const API = import.meta.env.VITE_API_URL;
+
 const MOCK_DATA = [
   { _id: '1', amount: 5000, category: 'Salary', date: new Date().toISOString(), description: 'Monthly Salary', type: 'income', method: 'Bank' },
   { _id: '2', amount: 1500, category: 'Food', date: new Date(Date.now() - 86400000).toISOString(), description: 'Groceries', type: 'expense', method: 'UPI' },
@@ -51,7 +53,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/transactions');
+        const res = await axios.get(`${API}/api/transactions`);
         setTransactions(res.data);
       } catch (err) {
         console.warn('Backend unavailable. Using mock data.');

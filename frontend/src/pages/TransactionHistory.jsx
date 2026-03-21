@@ -5,6 +5,8 @@ import { Trash2 } from 'lucide-react';
 import { getCategoryIcon, getCategoryColorClass, getMethodIcon } from './Dashboard';
 import { formatINR } from '../utils/formatters';
 
+const API = import.meta.env.VITE_API_URL;
+
 const MOCK_DATA = [
   { _id: '1', amount: 5000, category: 'Salary', date: new Date().toISOString(), description: 'Monthly Salary', type: 'income', method: 'Bank' },
   { _id: '2', amount: 1500, category: 'Food', date: new Date(Date.now() - 86400000).toISOString(), description: 'Groceries', type: 'expense', method: 'UPI' },
@@ -19,7 +21,7 @@ const TransactionHistory = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/transactions');
+        const res = await axios.get(`${API}/api/transactions`);
         setTransactions(res.data);
       } catch (err) {
         setTransactions(MOCK_DATA);
@@ -32,7 +34,7 @@ const TransactionHistory = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/transactions/${id}`);
+      await axios.delete(`${API}/api/transactions/${id}`);
       setTransactions(transactions.filter(t => t._id !== id));
     } catch (err) {
       setTransactions(transactions.filter(t => t._id !== id));
