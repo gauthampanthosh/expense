@@ -114,12 +114,12 @@ const Dashboard = () => {
 
       {/* Chart Section */}
       <h3 className="mb-2">Monthly Overview</h3>
-      <div className="card mb-4" style={{ height: 200 }}>
+      <div className="w-full h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <XAxis dataKey="name" axisLine={false} tickLine={false} tickFormatter={() => ''} height={0} />
-            <Tooltip cursor={{fill: 'transparent'}} formatter={(value) => formatINR(value)} contentStyle={{borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-md)'}}/>
-            <Bar dataKey="amount" radius={[4, 4, 4, 4]} barSize={40} />
+          <BarChart data={chartData}>
+            <XAxis dataKey="name" />
+            <Tooltip />
+            <Bar dataKey="amount" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
