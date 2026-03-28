@@ -54,9 +54,9 @@ const Dashboard = () => {
     const fetchTransactions = async () => {
       try {
         const res = await axios.get(`${API}/api/transactions`);
-        setTransactions(res.data);
+        setTransactions(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        console.warn('Backend unavailable. Using mock data.');
+        console.warn('Backend unavailable. Using mock data.', err);
         setTransactions(MOCK_DATA);
       } finally {
         setLoading(false);
@@ -65,16 +65,29 @@ const Dashboard = () => {
     fetchTransactions();
   }, []);
 
-  const totalIncome = transactions.filter(t => t.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
-  const totalExpense = transactions.filter(t => t.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
+  const totalIncome = transactions
+    .filter(t => t.type === 'income')
+    .reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+
+  const totalExpense = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+
   const balance = totalIncome - totalExpense;
 
   const chartData = useMemo(() => {
-    return [
-      { name: 'Income', amount: totalIncome, fill: '#10b981' },
-      { name: 'Expense', amount: totalExpense, fill: '#ef4444' }
-    ];
-  }, [totalIncome, totalExpense]);
+    const group = transactions.reduce((acc, curr) => {
+      const category = curr.category || 'Uncategorized';
+      const value = Number(curr.amount || 0);
+      if (!category) return acc;
+      acc[category] = (acc[category] || 0) + value;
+      return acc;
+    }, {});
+
+    return Object.entries(group)
+      .map(([name, amount]) => ({ name, amount }))
+      .sort((a, b) => b.amount - a.amount);
+  }, [transactions]);
 
   if (loading) return <div className="page-content">Loading...</div>;
 
@@ -136,9 +149,9 @@ const Dashboard = () => {
               {getCategoryIcon(t.category)}
             </div>
             <div className="transaction-details">
-              <div className="transaction-title">{t.category}</div>
+              <div className="transaction-title">{t.category || 'Uncategorized'}</div>
               <div className="transaction-meta">
-                {format(new Date(t.date), 'MMM dd')} • {t.description}
+                {format(new Date(t.date), 'MMM dd')} • {t.description || 'No description'}
               </div>
             </div>
             <div style={{textAlign: 'right'}}>

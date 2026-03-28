@@ -33,11 +33,14 @@ const TransactionHistory = () => {
   }, []);
 
   const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this transaction?')) return;
+
     try {
       await axios.delete(`${API}/api/transactions/${id}`);
-      setTransactions(transactions.filter(t => t._id !== id));
+      setTransactions(prev => prev.filter(t => t._id !== id));
     } catch (err) {
-      setTransactions(transactions.filter(t => t._id !== id));
+      console.warn('Delete failed, removing locally for UX', err);
+      setTransactions(prev => prev.filter(t => t._id !== id));
     }
   };
 
@@ -80,12 +83,12 @@ const TransactionHistory = () => {
               {getCategoryIcon(t.category)}
             </div>
             <div className="transaction-details">
-              <div className="transaction-title">{t.category}</div>
+              <div className="transaction-title">{t.category || 'Uncategorized'}</div>
               <div className="transaction-meta">
-                {format(new Date(t.date), 'MMM dd')} • {t.description}
+                {format(new Date(t.date), 'MMM dd')} • {t.description || 'No description'}
               </div>
               <div className="transaction-method" style={{display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '4px'}}>
-                 {getMethodIcon(t.method)} {t.method}
+                 {getMethodIcon(t.method)} {t.method || 'UPI'}
               </div>
             </div>
             <div style={{textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1rem'}}>
