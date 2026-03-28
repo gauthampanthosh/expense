@@ -14,13 +14,22 @@ router.get('/', async (req, res) => {
 
 // Create a transaction
 router.post('/', async (req, res) => {
+  const {
+    amount,
+    category,
+    date,
+    description,
+    type,
+    method,
+  } = req.body;
+
   const transaction = new Transaction({
-    amount: req.body.amount,
-    category: req.body.category,
-    date: req.body.date,
-    description: req.body.description,
-    type: req.body.type,
-    method: req.body.method || 'UPI'
+    amount,
+    category,
+    date: date || Date.now(),
+    description: (description || '').trim(),
+    type,
+    method: method || 'UPI',
   });
 
   try {

@@ -52,8 +52,15 @@ const AddTransaction = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const payload = {
+      ...formData,
+      description: formData.description ? formData.description.trim() : '',
+      amount: Number(formData.amount || 0),
+      date: formData.date || new Date().toISOString(),
+    };
+
     try {
-      await axios.post(`${API}/api/transactions`, formData);
+      await axios.post(`${API}/api/transactions`, payload);
       navigate('/');
     } catch (err) {
       console.warn('Backend unavailable, mock success', err);
